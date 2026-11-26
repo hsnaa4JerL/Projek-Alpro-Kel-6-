@@ -3,21 +3,18 @@
 #include <iomanip>
 using namespace std;
 
-// =====================================================================
-//  ARRAY DINAMIS (generik) - alokasi dengan new[], membesar otomatis
-// =====================================================================
 template <typename T>
 class ArrayDinamis {
 private:
     T*  data;
-    int ukuran;     // jumlah elemen terisi
-    int kapasitas;  // kapasitas array saat ini
+    int ukuran;
+    int kapasitas;
 
-    void perbesar() {                       // kapasitas dikali 2
+    void perbesar() {                      
         int kapBaru = kapasitas * 2;
         T* baru = new T[kapBaru];
         for (int i = 0; i < ukuran; i++) baru[i] = data[i];
-        delete[] data;                      // bebaskan array lama
+        delete[] data;                     
         data = baru;
         kapasitas = kapBaru;
     }
@@ -26,7 +23,6 @@ public:
     ArrayDinamis(int kapAwal = 4) : data(new T[kapAwal]), ukuran(0), kapasitas(kapAwal) {}
     ~ArrayDinamis() { delete[] data; }
 
-    // dilarang disalin agar tidak terjadi double delete
     ArrayDinamis(const ArrayDinamis&) = delete;
     ArrayDinamis& operator=(const ArrayDinamis&) = delete;
 
@@ -42,7 +38,6 @@ public:
     const T& operator[](int i) const { return data[i]; }
 };
 
-// ================= KODE STATUS (angka) =================
 enum Status {
     GAWAT_DARURAT = 0,
     DARURAT       = 1,
@@ -59,10 +54,9 @@ string namaStatus(int s) {
     }
 }
 
-// ================= DATA WILAYAH =================
 struct Wilayah {
     string kecamatan;
-    string jenisBencana;   // "Longsor" / "Puting Beliung"
+    string jenisBencana;   
     bool   a = false, b = false, c = false, d = false, e = false;
     int    jumlahSyarat = 0;
     int    status = WASPADA;
@@ -109,9 +103,7 @@ void hitungStatus(Wilayah &w) {
     else                                 w.status = WASPADA;
 }
 
-// ================= ISI DATA (sesuai kolom DATA pada tabel) =================
 void isiDataWilayah(ArrayDinamis<Wilayah> &data) {
-    // Daerah rawan longsor (nilai dummy, ganti dengan data asli)
     data.tambah(buatLongsor("Pujon",              120, 35, true,  1500, true));
     data.tambah(buatLongsor("Ngantang",           110, 32, true,  1200, false));
     data.tambah(buatLongsor("Kasembon",            90, 28, true,   800, false));
@@ -130,7 +122,6 @@ void isiDataWilayah(ArrayDinamis<Wilayah> &data) {
     data.tambah(buatLongsor("Ngajum",              55, 12, false,  250, false));
     data.tambah(buatLongsor("Wonosari",            75, 20, false,  350, false));
 
-    // Daerah rawan angin kencang / puting beliung (nilai dummy)
     data.tambah(buatPutingBeliung("Karangploso",  70, true,  true,  1500, true));
     data.tambah(buatPutingBeliung("Dau",          65, true,  false, 1100, true));
     data.tambah(buatPutingBeliung("Singosari",    55, true,  false,  600, false));
@@ -145,7 +136,6 @@ void isiDataWilayah(ArrayDinamis<Wilayah> &data) {
     data.tambah(buatPutingBeliung("Kepanjen",     66, true,  true,  1400, false));
 }
 
-// ================= TAMPILAN =================
 void garis(char ch = '-', int n = 75) { cout << string(n, ch) << endl; }
 
 void tampilkanProblem(const string &problem) {
@@ -204,28 +194,20 @@ void tampilkanList(const string &judul, const ArrayDinamis<string> &arr) {
 }
 
 int main() {
-    // ---- PROBLEM ----
     string problem = "Keterbatasan Metode Konvensional dalam Mengidentifikasi, "
                      "Memilih, dan Menentukan Wilayah Prioritas Penanganan Bencana";
 
-    // ---- DATA (array dinamis) ----
     ArrayDinamis<Wilayah> data;
     isiDataWilayah(data);
     for (int i = 0; i < data.banyak(); i++) hitungStatus(data[i]);
 
-    // ---- SOLUSI (array dinamis) ----
     ArrayDinamis<string> solusi;
     solusi.tambah("Level risiko dan imbauan untuk tiap laporan.");
     solusi.tambah("Tabel peringkat lokasi paling berbahaya.");
     solusi.tambah("Menggunakan sorting untuk menentukan daerah mana yang lebih urgent ditangani.");
 
-    // ---- FEEDBACK (array dinamis) ----
     ArrayDinamis<string> feedback;
-    feedback.tambah("ACC reference datanya sangat valid.");
-    feedback.tambah("Penggunaan algoritma sorting untuk menentukan prioritas daerah yang "
-                    "ditangani sangat pas dengan latar belakang masalah. Keep Up!");
 
-    // ---- OUTPUT ----
     garis('=');
     cout << "  KELOMPOK 6 - PRIORITAS PENANGANAN BENCANA (ARRAY DINAMIS)" << endl;
     garis('=');
@@ -238,7 +220,6 @@ int main() {
     tampilkanTabel(data);
 
     tampilkanList("SOLUSI", solusi);
-    tampilkanList("FEEDBACK 1", feedback);
 
-    return 0;   // memori dibebaskan otomatis oleh destruktor
+    return 0; 
 }
